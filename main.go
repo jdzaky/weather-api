@@ -70,12 +70,18 @@ func handleWeather(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/weather/", handleWeather)
+	http.HandleFunc("/weather", handleWeather)
 
 	fs := http.FileServer(http.Dir("./"))
 	http.Handle("/", fs)
 
-	handler := cors.Default().Handler(http.DefaultServeMux)
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://ceksuhuid.online"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"*"},
+	})
+
+	handler := c.Handler(http.DefaultServeMux)
 
 	log.Println("Server started on :9999")
 	log.Fatal(http.ListenAndServe(":9999", handler))
