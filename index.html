@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #weather-data {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weather App</h1>
+  <input type="text" id="city-input" placeholder="Enter city name">
+  <button onclick="getWeather()">Get Weather</button>
+  <div id="weather-data"></div>
+
+  <script>
+    function getWeather() {
+      const city = document.getElementById('city-input').value;
+      fetch(`/weather?city=${city}`)
+        .then(response => response.json())
+        .then(data => {
+          const weatherData = `
+            <p>City: ${data.name}</p>
+            <p>Temperature: ${data.main.temp} °C</p>
+          `;
+          document.getElementById('weather-data').innerHTML = weatherData;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('weather-data').innerHTML = '<p>Error getting weather data</p>';
+        });
+    }
+  </script>
+</body>
+</html>
