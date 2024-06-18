@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -13,6 +12,11 @@ type apiConfigData struct {
 	OpenWeatherMapApiKey string `json:OpenWeatherMapApiKey`
 }
 
+func loadApiConfig() apiConfigData {
+	apiKey := "c8a42afdd1f58bc8c395331fd010fcf6"
+	return apiConfigData{OpenWeatherMapApiKey: apiKey}
+}
+
 type weatherData struct {
 	Name string `json:"name"`
 	Main struct {
@@ -20,29 +24,12 @@ type weatherData struct {
 	} `json:"main"`
 }
 
-func loadApiConfig(filename string) (apiConfigData, error) {
-	bytes, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return apiConfigData{}, err
-	}
-	var c apiConfigData
-
-	err = json.Unmarshal(bytes, &c)
-	if err != nil {
-		return apiConfigData{}, err
-	}
-	return c, nil
-}
-
 func hello(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("hello from go!\n"))
 }
 
 func query(city string) (weatherData, error) {
-	apiConfig, err := loadApiConfig(".apiKey")
-	if err != nil {
-		return weatherData{}, err
-	}
+	apiConfig := loadApiConfig()
 	resp, err := http.Get("http://api.openweathermap.org/data/2.5/weather?APPID=" + apiConfig.OpenWeatherMapApiKey + "&q=" + city + "&units=metric")
 	if err != nil {
 		return weatherData{}, err

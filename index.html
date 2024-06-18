@@ -23,19 +23,30 @@
   <script>
     function getWeather() {
       const city = document.getElementById('city-input').value;
-      fetch(`/weather?city=${city}`)
-        .then(response => response.json())
-        .then(data => {
-          const weatherData = `
-            <p>Kota: ${data.name}</p>
-            <p>Temperatur: ${data.main.temp} °C</p>
-          `;
-          document.getElementById('weather-data').innerHTML = weatherData;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('weather-data').innerHTML = '<p>Error getting weather data</p>';
-        });
+  fetch(`/weather?city=${city}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Error getting weather data');
+      }
+    })
+    .then(data => {
+      const weatherData = `
+        <p>Kota: ${data.name}</p>
+        <p>Temperatur: ${data.main.temp} °C</p>
+      `;
+      document.getElementById('weather-data').innerHTML = weatherData;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('weather-data').innerHTML = '<p>Error getting weather data</p>';
+    });
     }
   </script>
 </body>
